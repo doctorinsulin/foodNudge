@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-def walking_distance_to_burn(kcal, bodyweight_kg):
+def walking_distance_to_burn(kcal, bodyweight_kg=75):
     """
     Returns the approximate distance in km that you need to walk in order
     to burn the given number of kcal, based on your bodyweight.
