@@ -28,14 +28,11 @@ def available_foods():
     """
     Return a JSON list of all the foods which we have calorie counts
     available for.
-
-    TODO: get_db function
-    TODO: make sure this works!
     """
-    cur = g.db.execute('SELECT x FROM Foods')
-    food_entries = cur.fetchall()
+    cursor = g.db.execute('SELECT title FROM food_items')
+    food_entries = cursor.fetchall()
     foods = [row[0] for row in food_entries]
-    return jsonify(foods)
+    return jsonify(foods=foods)
 
 
 @app.route('/<food>/kcal')
