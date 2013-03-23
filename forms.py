@@ -3,7 +3,7 @@
 from wtforms import Form, SelectField
 
 
-class Foods(Form):
+class FoodSelectForm(Form):
     """
     WTForms class, allowing the selection of up to 3 foods.
     The foods available must be defined in the handler, as in

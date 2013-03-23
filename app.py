@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
+from forms import FoodSelectForm
 import os
 
 app = Flask(__name__)
@@ -25,6 +26,22 @@ def available_foods():
     food_entries = cur.fetchall()
     foods = [row[0] for row in food_entries]
     return jsonify(foods)
+
+
+@app.route('/<food>/kcal')
+def calories_for_food(food):
+    """
+    URL endpoint to query the number of kcal in a single food item.
+    """
+    # query the DB
+    db = get_db()
+    calories = 0
+    cursor = db.execute('SELECT calories FROM Foods WHERE name=?', food)
+    calories = cursor.fetchone()[0]
+
+    # return the number
+    return jsonify(calories)
+
 
 
 if __name__ == '__main__':
