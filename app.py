@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
-from flask import Flask, render_template, jsonify, g
+from flask import Flask, render_template, jsonify, g, request
 from forms import FoodSelectForm
 import activities
 import os
@@ -22,21 +22,41 @@ app.config.from_object(__name__)
 @app.route('/')
 def index():
     """
-    Show the homepage
+    Show the form.
     """
-    return render_template('base.html', body='hello, world!')
+    form = FoodSelectForm(request.form)
+
+    available_food = available_foods()
+    available_foods_safe = [food.strip().replace(' ', '-').lower() for food in available_food]
+
+    for food_selection in [form.food1, form.food2, form.food3]:
+        food_selection.choices = zip(available_foods_safe, available_food)
+
+    for food in available_foods():
+        print food
+        print food.strip().replace(' ', '-').lower()
+
+    return render_template('form.html', form=form)
 
 
 @app.route('/foods')
-def available_foods():
+def available_foods_json():
     """
     Return a JSON list of all the foods which we have calorie counts
+    available for.
+    """
+    return jsonify(foods=available_foods())
+
+
+def available_foods():
+    """
+    Return a list of all the foods which we have calorie counts
     available for.
     """
     cursor = g.db.execute('SELECT title FROM food_items')
     food_entries = cursor.fetchall()
     foods = [row[0] for row in food_entries]
-    return jsonify(foods=foods)
+    return foods
 
 
 @app.route('/activity/<activity>/<int:kcal>kcal')
@@ -50,17 +70,13 @@ def activity(kcal, activity):
                 distance=activities.walking_distance_to_burn(kcal), unit='km')
 
 
-@app.route('/<food>/kcal')
 def calories_for_food(food):
     """
-    URL endpoint to query the number of kcal in <food>.
+    Return the number of kcal for the food.
     """
-    # query the DB
     cursor = g.db.execute('SELECT calories FROM food_items WHERE food_items.title=?', [food])
     calories = str(cursor.fetchone()[0])
-
-    # return the number
-    return (calories, 200, {'Content-Type': 'text/plain'})
+    return calories
 
 
 def connect_db():

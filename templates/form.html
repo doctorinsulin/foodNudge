@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+    <form id="nudge-form" method=get action="/nudge" class="form-horizontal">
+        <legend>Choose your foods!</legend>
+
+        {% for field in form %}
+        <div class="control-group">
+            <label class="control-label">{{ field.label }}</label>
+            <div class="controls">
+                {{ field(pattern="^\w{4}\d{5}$", title="a valid University of Edinburgh course code, consisting of 4 letters and 5 numbers, i.e. MATH08058") }}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div id="form-buttons" class="form-actions">
+            <button type="submit" id="course-code-form-button" class="btn btn-primary">Nudge me!</button>
+        </div>
+    </form>
+{% endblock body %}
+
+
+{% block styles %}
+    <style type="text/css">
+    input {
+        display: block;
+    }
+    </style>
+{% endblock styles %}
