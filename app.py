@@ -3,6 +3,7 @@
 from __future__ import with_statement
 from flask import Flask, render_template, jsonify, g
 from forms import FoodSelectForm
+import activities
 import os
 import sqlite3
 from contextlib import closing
@@ -36,6 +37,17 @@ def available_foods():
     food_entries = cursor.fetchall()
     foods = [row[0] for row in food_entries]
     return jsonify(foods=foods)
+
+
+@app.route('/activity/<activity>/<int:kcal>kcal')
+def activity(kcal, activity):
+    """
+    Return JSON describing how much of an activity you need to do in
+    order to burn off a number of calories.
+    """
+    # TODO: add other activities besides walking
+    return jsonify(activity='walking',
+                distance=activities.walking_distance_to_burn(kcal), unit='km')
 
 
 @app.route('/<food>/kcal')
