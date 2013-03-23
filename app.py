@@ -20,6 +20,9 @@ app.config.from_object(__name__)
 
 @app.route('/')
 def index():
+    """
+    Show the homepage
+    """
     return render_template('base.html', body='hello, world!')
 
 
@@ -49,10 +52,16 @@ def calories_for_food(food):
 
 
 def connect_db():
+    """
+    Connect to the database.
+    """
     return sqlite3.connect(app.config['DATABASE'])
 
 
 def init_db():
+    """
+    Initialise the database from the `schema.sql` file.
+    """
     with closing(connect_db()) as db:
         with app.open_resource('schema.sql') as f:
             db.cursor().executescript(f.read())
