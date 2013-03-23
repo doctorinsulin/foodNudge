@@ -32,8 +32,7 @@ def available_foods():
     TODO: get_db function
     TODO: make sure this works!
     """
-    db = get_db()
-    cur = db.execute('SELECT x FROM Foods')
+    cur = g.db.execute('SELECT x FROM Foods')
     food_entries = cur.fetchall()
     foods = [row[0] for row in food_entries]
     return jsonify(foods)
@@ -42,14 +41,14 @@ def available_foods():
 @app.route('/<food>/kcal')
 def calories_for_food(food):
     """
-    URL endpoint to query the number of kcal in a single food item.
+    URL endpoint to query the number of kcal in <food>.
     """
     # query the DB
-    cursor = g.db.execute('SELECT calories FROM Foods WHERE name=?', food)
-    calories = cursor.fetchone()[0]
+    cursor = g.db.execute('SELECT calories FROM food_items WHERE food_items.title=?', [food])
+    calories = str(cursor.fetchone()[0])
 
     # return the number
-    return jsonify(calories)
+    return (calories, 200, {'Content-Type': 'text/plain'})
 
 
 def connect_db():
@@ -73,10 +72,10 @@ def teardown_request(exception):
     g.db.close()
 
 
-@app.route('/entries')
-def show_entries():
-    cur = g.db.execute('select title, calories from food_items')
-    entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
+@app.route('/table/food_items')
+def show_food_items():
+    cur = g.db.execute('SELECT title, calories FROM food_items')
+    entries = [dict(title=row[0], calories=row[1]) for row in cur.fetchall()]
     return render_template('base.html', body=entries)
 
 
