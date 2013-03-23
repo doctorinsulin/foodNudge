@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>foodNudge{% if page_title %} - {{ page_title }}{% endif %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" />
+
+    <!-- Footer styles -->
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            /* The html and body elements cannot have any padding or margin. */
+        }
+
+        #main-content {
+            margin-top: 80px;
+        }
+
+        /* Wrapper for page content to push down footer */
+        #wrap {
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            /* Negative indent footer by it's height */
+            margin: 0 auto -70px;
+        }
+
+        /* Set the fixed height of the footer here */
+        #push,
+        #footer {
+            height: 70px;
+            text-align: center;
+        }
+        #footer {
+            background-color: rgb(238, 238, 238);
+        }
+        #footer p.credit {
+            margin-top: 10px;
+        }
+
+        /* Lastly, apply responsive CSS fixes as necessary */
+        @media (max-width: 767px) {
+            #footer {
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+    </style>
+
+    {% block styles %}
+    {% endblock styles %}
+
+    {% block headscripts %}
+    {% endblock headscripts %}
+</head>
+
+<body>
+
+    <div id="wrap">
+        {% block header %}
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="/">foodNudge</a>
+                </div>
+            </div>
+        </div>
+        {% endblock header %}
+
+
+        <div class="container">
+            <div id="main-content" class="row-fluid">
+
+                <div class="span8">
+                    {% block body %}
+                    {% endblock body %}
+                </div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+
+
+    <div id="footer">
+        <div class="container">
+            <p class="muted credit">Credits here.</p>
+            <p class="muted">All data etc. copyright &copy; its respective owners. Other stuff here.</p>
+
+            <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+            {% block scripts %}
+            {% endblock scripts %}
+        </div>
+    </div>
+</body>
+</html>
