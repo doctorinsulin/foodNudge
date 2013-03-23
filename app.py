@@ -5,6 +5,7 @@ from flask import Flask, render_template, jsonify, g, request
 from forms import FoodSelectForm
 import activities
 import os
+import re
 import sqlite3
 from contextlib import closing
 
@@ -26,17 +27,24 @@ def index():
     """
     form = FoodSelectForm(request.form)
 
-    available_food = available_foods()
-    available_foods_safe = [food.strip().replace(' ', '-').lower() for food in available_food]
+    foods_dict = {}
+    for food in available_foods():
+        foods_dict[safe_string(food)] = food
 
     for food_selection in [form.food1, form.food2, form.food3]:
-        food_selection.choices = zip(available_foods_safe, available_food)
-
-    for food in available_foods():
-        print food
-        print food.strip().replace(' ', '-').lower()
+        food_selection.choices = zip(foods_dict.keys(), foods_dict.values())
 
     return render_template('form.html', form=form)
+
+
+def safe_string(string):
+    """
+    Takes a string, removes all non-word characters, and replaces
+    whitespace with dashes (`-`).
+    """
+    string_alphanum = re.sub('[^\w\s]', '', string)
+    string_separated = re.sub('\s', '-', string_alphanum).lower()
+    return string_separated
 
 
 @app.route('/foods')
@@ -67,7 +75,8 @@ def activity(kcal, activity):
     """
     # TODO: add other activities besides walking
     return jsonify(activity='walking',
-                distance=activities.walking_distance_to_burn(kcal), unit='km')
+                   distance=activities.walking_distance_to_burn(kcal),
+                   unit='km')
 
 
 def calories_for_food(food):
